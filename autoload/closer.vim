@@ -38,6 +38,15 @@ function! closer#close()
   let ln = line('.') - 1
   let line = getline(ln)
   let indent = matchstr(line, '^\s*')
+  
+  " temp fix: surpress during entering function params/args
+  let escaped_flags = ''
+  for s:char in split(b:closer_flags, '\zs')
+    let escaped_flags = escaped_flags . '\' . s:char
+  endfor
+  if match(line, '^.*[' . escaped_flags . ']\s*$') == -1
+    return ''
+  endif
 
   let closetag = s:get_closing(line)
   if closetag == '' | return "" | endif
